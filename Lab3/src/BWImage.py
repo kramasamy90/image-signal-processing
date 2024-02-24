@@ -93,6 +93,11 @@ class BWImage:
         # Unpack the index.
         i, j = index
 
+        # Return -1 if the indices are totally out of range.
+        xlim, ylim = self.shape()
+        if (i <= -1 or j <= -1 or i >= xlim or j >= ylim):
+            return -1
+
         # Bilinear interpolation is implemented within the operator overloading.
         # If i and j are integer, then the input is interpreted as a pixel.
         # If they are not integer, it is interpreted as a postion (not pixel).

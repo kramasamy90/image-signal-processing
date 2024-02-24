@@ -22,6 +22,8 @@ def homography_4pts(pts1, pts2):
         A[2 * i] = np.array([-1 * x, -1 * y, -1, 0, 0, 0, x * x_, y * x_, x_])
         A[2 * i + 1] = np.array([0, 0, 0, -1 * x, -1 * y, -1, x * y_, y * y_, y_])
     _H = null_space(A)
+    if(_H.shape[0] != 9):
+        _H = np.eye(3)
     H = _H.reshape((3, 3))
     return H
 
@@ -41,7 +43,6 @@ def ransac(cpts):
     ## Input and output variables.
     # Number of point correspondences.
     n = cpts.shape[1] 
-    print("n = ", n)
     # Largest consensus set.
     largest_consensus_set = set()
 
@@ -50,14 +51,12 @@ def ransac(cpts):
     err = 1
     # Good consensus set size.
     d = 0.8 *n
-    print("d = ", d)
     # Maximum number of iterations.
     # !! Change num_iters.
     num_iters = 10
 
     ### Core RANSAC algorithm.
     for i in range(num_iters):
-        print("i = ", i)
         ## Choose 4 random points.
 
         # I -> Indices of the chosen 4 random points
@@ -86,7 +85,6 @@ def ransac(cpts):
             pt1_ = to_cartesian(H @ to_homogenous(pt2))
 
             if((np.linalg.norm(pt1_ - pt1)) < err):
-                # print("j = ", j)
                 consensus_set.add(j)
             
         if (len(consensus_set) + 4 > len(largest_consensus_set)):
@@ -94,10 +92,8 @@ def ransac(cpts):
             largest_consensus_set = consensus_set | I_set
         
         if (len(largest_consensus_set) >= d):
-            print("Largest CS = ", len(largest_consensus_set))
             break
     
-    print(len(largest_consensus_set))
     return H
 
 
