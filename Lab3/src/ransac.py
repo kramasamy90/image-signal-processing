@@ -24,7 +24,37 @@ def homography_4pts(pts1, pts2):
     _H = null_space(A)
     if(_H.shape[0] != 9):
         _H = np.eye(3)
+        return _H
     H = _H.reshape((3, 3))
+    return H
+
+def homography_consensus(pts1, pts2):
+    '''
+    Calculate homography based on n-points using SVD.
+
+    Args:
+        pts (list): Array or n points. 
+
+    Returns:
+        H (np.array): Homography based on n points.
+    '''
+
+    n = len(pts1)
+    print("n = ", n)
+
+    A = np.zeros((2 * n, 9), dtype='float64')
+
+    for i in range(n):
+        x_, y_ = pts1[i][0], pts1[i][1]
+        x, y = pts2[i][0], pts2[i][1]
+        A[2 * i] = np.array([-1 * x, -1 * y, -1, 0, 0, 0, x * x_, y * x_, x_])
+        A[2 * i + 1] = np.array([0, 0, 0, -1 * x, -1 * y, -1, x * y_, y * y_, y_])
+    # _H = null_space(A)
+    U, S, Vt = np.linalg.svd(A, full_matrices=True)
+    V = Vt.T
+    H = V[:, -1].reshape(3, 3)
+    # print("Dim: ", H.shape)
+    # H = _H.reshape((3, 3))
     return H
 
 
@@ -93,6 +123,11 @@ def ransac(cpts):
         
         if (len(largest_consensus_set) >= d):
             break
+    
+    pts1 = [cpts[0][k] for k in largest_consensus_set]
+    pts2 = [cpts[1][k] for k in largest_consensus_set]
+
+    H = homography_consensus(pts1, pts2)
     
     return H
 

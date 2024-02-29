@@ -25,6 +25,7 @@ def stitch(canvas, imgs, _H, tx, ty):
             v = 0
             num_vals = 0
             sum_vals = 0
+            # vals = []
             for k in range(len(H)):
                 _ = to_cartesian(H[k] @ to_homogenous(np.array([i - tx, j - ty]).reshape(2, 1)))
                 x, y = _[0][0], _[1][0]
@@ -34,8 +35,10 @@ def stitch(canvas, imgs, _H, tx, ty):
                 else:
                     num_vals += 1
                     sum_vals += v
+                    # vals.append(v)
                 
             if num_vals > 0:            
                 canvas[i, j] = sum_vals / num_vals
+                # canvas[i, j] = np.median(vals)
 
     return canvas
