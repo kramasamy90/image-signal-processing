@@ -108,7 +108,7 @@ class BWImage:
 
         # Use blank pixel without any value.
         # like pixels out of the target image bound.
-        if(i < 0 or j < 0 or i >= self.im.shape[0] or j >= self.im.shape[1]):
+        if(i < 0 or j < 0 or i > self.im.shape[0]-1 or j > self.im.shape[1]-1):
             return self.blank_pixel[0]
         
         return self.im[i, j][0]
