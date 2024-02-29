@@ -15,6 +15,9 @@ def homography_4pts(pts1, pts2):
         H_21 (np.array): Homography such that I_1 = H_21 @ I_2
     '''
 
+    # A same notation as used in the class.
+    # Our goal is to find a vector h such that Ah = 0.
+    # This vector h will be reshaped and returned as the homography matrix H.
     A = np.zeros((8, 9), dtype='float64')
     for i in range(4):
         x_, y_ = pts1[i][0], pts1[i][1]
@@ -39,9 +42,10 @@ def homography_consensus(pts1, pts2):
         H (np.array): Homography based on n points.
     '''
 
+    # A same notation as used in the class.
+    # Our goal is to find a vector h that minimizes ||Ah||.
+    # This vector h will be reshaped and returned as the homography matrix H.
     n = len(pts1)
-    print("n = ", n)
-
     A = np.zeros((2 * n, 9), dtype='float64')
 
     for i in range(n):
@@ -49,12 +53,10 @@ def homography_consensus(pts1, pts2):
         x, y = pts2[i][0], pts2[i][1]
         A[2 * i] = np.array([-1 * x, -1 * y, -1, 0, 0, 0, x * x_, y * x_, x_])
         A[2 * i + 1] = np.array([0, 0, 0, -1 * x, -1 * y, -1, x * y_, y * y_, y_])
-    # _H = null_space(A)
+
     U, S, Vt = np.linalg.svd(A, full_matrices=True)
     V = Vt.T
     H = V[:, -1].reshape(3, 3)
-    # print("Dim: ", H.shape)
-    # H = _H.reshape((3, 3))
     return H
 
 
@@ -124,13 +126,12 @@ def ransac(cpts):
         if (len(largest_consensus_set) >= d):
             break
     
+    # Get homography based on the largest consensus set.
     pts1 = [cpts[0][k] for k in largest_consensus_set]
     pts2 = [cpts[1][k] for k in largest_consensus_set]
-
     H = homography_consensus(pts1, pts2)
     
     return H
-
 
 
 # !! Clean-up testing code.
