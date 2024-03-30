@@ -2,7 +2,7 @@ import numpy as np
 from BWImage import BWImage
 from tqdm import tqdm
 
-def ML(img):
+def get_ml(img):
     '''
         Gives modified laplacian for the input image.
 
@@ -30,7 +30,7 @@ def ML(img):
     return ml
 
 
-def SML(img, q):
+def get_sml(img, q):
     '''
     Returns Sum-modified Laplacian.
 
@@ -45,14 +45,14 @@ def SML(img, q):
     m, n = img.shape
     sml = np.zeros((m - 2 * q, n - 2 * q))
 
-    ml = ML(img)
+    ml = get_ml(img)
     for i in range(q, m - q):
         for j in range(q, n - q):
             sml[i-q, j-q] = np.sum(ml[i-q:i+q+1, j - q:j + q + 1])
 
     return sml
 
-def get_d(Fx, Fy, Fz, dx, dy, dz):
+def get_depth(Fx, Fy, Fz, dx, dy, dz):
     '''
     Given the intensities at three depths Fm, F_m-1, F_m+1 return d_bar.
     Args:
@@ -75,7 +75,7 @@ def get_d(Fx, Fy, Fz, dx, dy, dz):
 
     return d_bar
 
-def SFF(img_stack, q, dof = 50.5):
+def get_sff(img_stack, q, dof = 50.5):
     '''
     Given stack of images returns the depth at each pixel.
 
@@ -92,7 +92,7 @@ def SFF(img_stack, q, dof = 50.5):
     sff = np.zeros((M - 2*q, N - 2*q))
 
     for img in img_stack:
-        sml_stack.append(SML(img, q))
+        sml_stack.append(get_sml(img, q))
 
     for i in range(M - 2 * q):
         for j in range(N - 2 * q):
@@ -104,6 +104,6 @@ def SFF(img_stack, q, dof = 50.5):
             elif m == K-1:
                 sff[i][j] = (K-1) * dof
             else:
-                sff[i][j] = get_d(v[m-1], v[m], v[m+1], m-1, m, m+1) * dof
+                sff[i][j] = get_depth(v[m-1], v[m], v[m+1], m-1, m, m+1) * dof
 
     return sff
