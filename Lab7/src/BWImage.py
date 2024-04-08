@@ -27,7 +27,6 @@ class BWImage:
 
         # im holds the np array of the pixel values.
         self.im = im
-        self.im_2d = np.mean(im, axis=2).astype('int')
 
         # Some standard colors.
         self.blank_pixel = [self.blank_value for i in range(3)]
@@ -67,13 +66,6 @@ class BWImage:
                 Numpy array of dimension (x, y, 3) with pixel values.
         '''
         return self.im
-
-    def get_image_2d(self):
-        '''
-            Return self.im_grey which is a 2D image without the colors.
-        '''
-
-        return self.im_2d
     
     def shape(self):
         '''
