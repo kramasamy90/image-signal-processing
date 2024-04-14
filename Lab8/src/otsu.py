@@ -19,14 +19,25 @@ def get_histogram(img, channel = 0, depth = 8):
     
     return H
 
-def get_dev_between(sum_l, sum_r, n_l, n_r):
+def get_between_class_variance(sum_l, sum_r, n_l, n_r):
+    '''
+    Get between_class_variance.
+    Args:
+        sum_l (int) -> Sum of intentsities of left class.
+        sum_r (int) -> Sum of intentsities of right class.
+        n_l   (int) -> Sum of frequencies of left class.
+        n_r   (int) -> Sum of frequencies of right class.
+    
+    Returns:
+        between_dev (float) -> Between class variance.
+    '''
     m1 = sum_l / n_l
     m2 = sum_r / n_r
     m = (sum_l + sum_r) / (n_l + n_r)
     between_dev = (((m1 - m)**2) * (n_l / (n_l + n_r))) + (((m2 - m)**2) * (n_r / (n_l + n_r)))
     return between_dev
 
-def get_dev_between_w_previous(sum_l, sum_r, n_l, n_r, hist, t):
+def get_between_class_variance_recursively(sum_l, sum_r, n_l, n_r, hist, t):
     '''
     Get variance across the two groups separated by threshold t.
     It exploits the previous calculation of sum.
@@ -64,9 +75,6 @@ def otsu(hist):
     '''
     sum_all = np.sum(np.array([i * hist[i] for i in range(hist.shape[0])]))
     n = np.sum(hist)
-    # for i in range(len(hist)):
-        # sum_all += i * hist[i]
-    # n = np.sum(hist)
 
     l_lim = 0
     while(hist[l_lim] == 0):
@@ -88,15 +96,13 @@ def otsu(hist):
     max_dev = 0
     max_t = 0
 
-    between_devs.append(get_dev_between(sum_l, sum_r, n_l, n_r))
-
+    between_devs.append(get_between_class_variance(sum_l, sum_r, n_l, n_r))
 
     for i in range(l_lim + 1, r_lim):
-        sum_l, sum_r, n_l, n_r, between_dev = get_dev_between_w_previous(sum_l, sum_r, n_l, n_r, hist, i + 1)
+        sum_l, sum_r, n_l, n_r, between_dev = get_between_class_variance_recursively(sum_l, sum_r, n_l, n_r, hist, i + 1)
         between_devs.append(between_dev)
         if between_dev > max_dev:
             max_dev = between_dev
             max_t = i + 1
 
     return max_t, between_devs
-
