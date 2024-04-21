@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 def get_pixel_array(img):
     '''
@@ -41,3 +43,27 @@ def get_image(pixel_array, m, n):
             img[i, j] = pixel_array[:, i * n + j]
     
     return img
+
+def plot_rgb(ax, image, title):
+
+    # Reshape the image to a 1D array of RGB values
+    rgb_values = []
+    for i in range(image.shape[0]):
+        for j in range(image.shape[1]):
+            rgb_values.append(image[i, j])
+    rgb_values = np.array(rgb_values)
+
+    # Extract R, G, B values
+    r = rgb_values[:, 0]
+    g = rgb_values[:, 1]
+    b = rgb_values[:, 2]
+
+    ax.scatter(r, g, b, c=rgb_values / 255.0, marker='o')
+
+    # Set axis labels
+    ax.set_xlabel('Red')
+    ax.set_ylabel('Green')
+    ax.set_zlabel('Blue')
+
+    ax.set_title(title)
+    return ax

@@ -30,24 +30,24 @@ def get_nearest_cluster(x, clusters):
     
     return [nearest_cluster_id, nearest_dist]
 
-def kmeans(x, k, clusters = None, max_iters = None, print_interval = 10):
+def kmeans(x, k, clusters = None, max_iters = None, print_interval = 10, verbose=False):
 
     '''
     Perform k means clustering on input data x.
 
     Args:
-        x (np.ndarray)                   -> Input array. Dimension d x N.
+        x         (np.ndarray)           -> Input array. Dimension d x N.
                                              N - Number of datapoints.
                                              d - dimension of each datapoint.
-        
-        k                                -> Number of clusters.
-        clusters                         -> Initial cluster centers.
-        num_iters                        -> Limit on number of iterations.
+        k         (int)                  -> Number of clusters.
+        clusters  (int)                  -> Initial cluster centers.
+        num_iters (int)                  -> Limit on number of iterations.
+        verbose   (bool)                 -> If true print messages.
     
     Returns: [cluster_assignment, clusters, cost]
         cluster_assignment (np.ndarray)  -> Cluster assignment. 1D array of length N.
-        clusters                         -> Cluster centers. Dim: k x N.
-        cost                             -> Cost corresponding to the cluster assignment.
+        clusters           (np.ndarray)  -> Cluster centers. Dim: k x N.
+        cost               (double)      -> Cost corresponding to the cluster assignment.
     '''
 
     d, N = x.shape
@@ -58,7 +58,7 @@ def kmeans(x, k, clusters = None, max_iters = None, print_interval = 10):
     if clusters is None:
         clusters = []
         for i in range(d):
-            clusters.append(np.random.uniform(min_x[i], max_x[i], k))
+            clusters.append(np.random.uniform(0, 255, k))
         clusters = np.array(clusters)
     cluster_assignment = np.zeros(N, dtype=int)
 
@@ -93,10 +93,11 @@ def kmeans(x, k, clusters = None, max_iters = None, print_interval = 10):
 
     # 4. Break upon convergence.
         if cluster_id_is_same:
-            print("Convergence")
+            if verbose:
+                print("Convergence")
             break
     
-        if (iter % print_interval == 0):
+        if (iter % print_interval == 0 and verbose):
             print(f'Iteration: {iter}, Cost: {cost}')
 
     return [cluster_assignment, clusters, cost]
