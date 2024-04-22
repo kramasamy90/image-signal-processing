@@ -65,5 +65,9 @@ def plot_rgb(ax, image, title):
     ax.set_ylabel('Green')
     ax.set_zlabel('Blue')
 
+    ax.set_xlim(0, 255) 
+    ax.set_ylim(0, 255) 
+    ax.set_zlim(0, 255) 
+
     ax.set_title(title)
     return ax
