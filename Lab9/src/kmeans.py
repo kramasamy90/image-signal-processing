@@ -15,13 +15,13 @@ def get_nearest_cluster(x, clusters):
     '''
 
     d, k = clusters.shape
-    nearest_cluster = clusters[:, 0]
+    nearest_cluster = clusters[:, 0].reshape(d, 1)
     nearest_dist = np.linalg.norm(nearest_cluster - x)
     id = 0
     nearest_cluster_id = id
     while id < k-1:
         id += 1
-        cluster = clusters[:, id]
+        cluster = clusters[:, id].reshape(d, 1)
         dist = np.linalg.norm(cluster - x)
         if dist < nearest_dist:
             nearest_cluster_id = id
@@ -79,7 +79,7 @@ def kmeans(x, k, clusters = None, max_iters = None, print_interval = 10, verbose
             cluster_assignment[i] = id
             cluster_size[id] += 1
             cost += dist ** 2
-
+        
     # 3. Recalculate cluster center.
 
         clusters = np.zeros(d * k, dtype=np.float64).reshape(d, k)
